@@ -2,7 +2,7 @@
 import streamlit as st
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_chroma import Chroma
+#from langchain_chroma import Chroma
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -11,6 +11,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import FAISS
 import os
 
 from dotenv import load_dotenv
@@ -56,7 +57,7 @@ if api_key:
     # Split and create embeddings for the documents
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
         splits = text_splitter.split_documents(documents)
-        vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+        vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
         retriever = vectorstore.as_retriever()    
 
         contextualize_q_system_prompt=(
@@ -120,9 +121,9 @@ if api_key:
                     "configurable": {"session_id":session_id}
                 },  # constructs a key "abc123" in `store`.
             )
-            st.write(st.session_state.store)
+            #st.write(st.session_state.store)
             st.write("Assistant:", response['answer'])
-            st.write("Chat History:", session_history.messages)
+            #st.write("Chat History:", session_history.messages)
 else:
     st.warning("Please enter the GRoq API Key")
 
